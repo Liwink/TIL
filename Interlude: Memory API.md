@@ -24,7 +24,10 @@ free(x);
 * Forgetting To Allocate Memory
 * Not Allocating Enough Memory
 * Forgetting to Initialize Allocated Memory
-* 
+* Forgetting To Free Memory (**memory leak**)
+* Freeing Memory Befor You Are Done With It
+* Freeing Memory Repeatedly
+* Calliing free() Incorrectly
 
 
 
@@ -34,3 +37,7 @@ free(x);
 * compile time and runtime
 * heap and stack
 * garbage collector
+
+##### When to Use Heap
+
+> If you need to allocate a large block of memory (e.g. a large array, or a big struct), and you need to keep that variable around a long time (like a global), then you should allocate it on the heap.
