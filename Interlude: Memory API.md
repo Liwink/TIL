@@ -29,6 +29,9 @@ free(x);
 * Freeing Memory Repeatedly
 * Calliing free() Incorrectly
 
+### Underlying OS Support
+* `brk`
+* `mmap`
 
 
 
