@@ -19,6 +19,22 @@ In developing the virtualization of the **CPU**:
 * a **base** register is used to transform virtual addresses into physical addresses
 * a **bounds** register ensures that such addresses are within the confines of the address space 
 
+### Hardware Support: A Summary
+
+| **Hardwar Requirements** | **Notes** |
+| --- | ------ |
+| Privileged mode | Needed to prevent **user-mode processes** from executing privileged operations |
+| Bsae/bounds registers | Need pair of registers per CPU to support address translation and bounds checks|
+| Translate virtual addresses and check if within bounds| Circuitry to do translations and check limits |
+| Privileged instructions(s) to registerexception handlers | OS must be able to tell hardware what code to run if exception occurs |
+| Ability to raise exceptions | When processes try to access privileged instructions or out-of-bounds memory |
+
+### Operating System Issues
+
+
+
+
+
 
 
 
