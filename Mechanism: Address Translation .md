@@ -31,7 +31,10 @@ In developing the virtualization of the **CPU**:
 
 ### Operating System Issues
 
-
+1. finding space for process's address space in memory when it is created
+2. reclaiming all of process's memory when it is terminated
+3. saving and restoring the base-and-bounds pairs when it switches between processes (only one base and bounds register pair on each CPU)
+4. providing exception handlers to take action when the CPU raise an exception
 
 
 
