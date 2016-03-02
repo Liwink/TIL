@@ -1,4 +1,4 @@
-## Intro to D3.JS (part I)
+## Let's Make a Bar Chart, I
 
 ### Web Standards
 
