@@ -1,4 +1,4 @@
-## Intro to D3.JS
+## Intro to D3.JS (part I)
 
 ### Web Standards
 
@@ -68,38 +68,32 @@ d3.selectAll("section")
 
 #### Coding a Chart, Manually
 
+create a bar chart *without* javaScript
 
-`select` 用于选中一个元素，`selectAll` 选中一组元素。
-`selectAll` 选中了所有现有和**将来可能出现**的元素。
-大部分 D3 的方法都返回 D3 对象实例，所以可以采用链式写法。
+...
+
+#### Coding a Chart, Automatically
+
+[`selection.enter()`](https://github.com/mbostock/d3/wiki/Selections#enter)
+Returns the enter selection: placeholder nodes for each data element for which no corresponding existing DOM element was found in the current selection.
+The enter selection only defines the `append`, `insert`, `select` and `call` operators; you must use these operators to **instantiate** the entering elements before modifying any content.
 
 ```
-var svg = d3.select('svg');
-var rects = svg.selectAll('rect')
-  .data(sales);
+d3.select(".chart")  // select the chart container
+  .selectAll("div")  
+    .data(data)		 // join the data to the selection
+  .enter().append("div")
+    .style("width", function(d) { return d * 10 + "px"; })
+    .text(function(d) { return d; });
+```
 
-var newRects = rects.enter();
+#### Scaling to Fit
 
-var maxCount = d3.max(sales, function(d, i) {
-  return d.count;
-});
+D3's scales specify a mapping from data space(domain) to display space(range).
+
+```
 var x = d3.scale.linear()
-  .range([0, 300])
-  .domain([0, maxCount]);
-var y = d3.scale.ordinal()
-  .rangeRoundBands([0, 75])
-  .domain(sales.map(function(d, i) {
-    return d.product
-  }));
-
-newRects.append('rect')
-  .attr('x', x(0))
-  .attr('y', function(d, i) {
-    return y(d.product);
-  })
-  .attr('height', y.rangeBand())
-  .attr('width', function(d, i) {
-    return x(d.count);
-  });
+	.domain([0, d3.max(data)])
+	.range([0, 420]);
 ```
 
