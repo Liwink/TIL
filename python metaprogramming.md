@@ -153,7 +153,7 @@ func = decorator(x, y, z)(func)
 ##### 讨论
 
 * 编程一致性：选 `@logged` 还是 `@logged()`
-* `functools.partial` 
+* `functools.partial` 预制参数
 
 
 
