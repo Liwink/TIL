@@ -26,3 +26,5 @@ location /wsapp/ {
 	proxy_set_header Connection "upgrade";
 }
 ```
+
+[NGINX as a WebSocket Proxy](https://www.nginx.com/blog/websocket-nginx/)
