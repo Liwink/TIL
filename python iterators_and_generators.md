@@ -15,6 +15,7 @@ def test_yield():
 ```
 
 1. 识别到函数中有 `yield` 关键字，就返回 `generator`
+2. `yield` 会让 `generator` 挂起它的执行
 
 ##### next 后执行顺序
 
@@ -63,6 +64,7 @@ def test_send():
 1. `yield` 是非阻塞的！
 2. 没 `send` 时 `yield` 会将 `None` 推出
 3. `send` 会促发 `__next__()`，并传递值
+4. `send(None)` 可以启动协程
 
 ```
 def test_send():
@@ -82,3 +84,45 @@ def test_send():
 
 1. `text = yield 1` 这段有点怪
 
+##### 阻塞回调
+
+```
+
+	def framework(logic, callback):
+		s = logic()
+		print('[FX] logic: ', s)
+		print('[FX] do someting')
+		callback('async: ' + s)
+
+	def logic():
+		s = 'mylogic'
+		return s
+
+	def callback(s):
+		print(s)
+		
+	>>> framework(logic, callback)
+```
+
+##### 非阻塞回调
+
+```
+
+	def framework(logic):
+		try:
+			it = logic()
+			s = next(it)
+			print("[FX] logic: ", s)
+			print("[FX] do someting")
+			it.send("async: " + s)
+		except StopIteration:
+			pass
+	
+	def logic():
+		s = "mylogic"
+		r = yield s
+		print(r)
+```
+
+但上面并不能看出「非阻塞」和「阻塞」式的区别！
+写出一个看得出区别的例子！
