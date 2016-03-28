@@ -84,45 +84,49 @@ def test_send():
 
 1. `text = yield 1` 这段有点怪
 
-##### 阻塞回调
+##### 任务调度
+
+```
+from collections import deque
+
+def countdown(n):
+    while n > 0:
+        print("T-minus", n)
+        yield
+        n -= 1
+    print("Blastoff!")
+
+def countup(n):
+    x = 0
+    while x < n:
+        print("Counting up", x)
+        yield
+        x += 1
+
+class TaskScheduler:
+    def __init__(self):
+        self._task_queue = deque()
+    
+    def new_task(self, task):
+        self._task_queue.append(task)
+    
+    def run(self):
+        while self._task_queue:
+            task = self._task_queue.popleft()
+            try:
+                next(task)
+                self._task_queue.append(task)
+            except StopIteration:
+                pass
+
+
+if __name__ == "__main__":
+    sched = TaskScheduler()
+    sched.new_task(countdown(10))
+    sched.new_task(countdown(5))
+    sched.new_task(countup(8))
+    sched.run()
 
 ```
 
-	def framework(logic, callback):
-		s = logic()
-		print('[FX] logic: ', s)
-		print('[FX] do someting')
-		callback('async: ' + s)
-
-	def logic():
-		s = 'mylogic'
-		return s
-
-	def callback(s):
-		print(s)
-		
-	>>> framework(logic, callback)
-```
-
-##### 非阻塞回调
-
-```
-
-	def framework(logic):
-		try:
-			it = logic()
-			s = next(it)
-			print("[FX] logic: ", s)
-			print("[FX] do someting")
-			it.send("async: " + s)
-		except StopIteration:
-			pass
-	
-	def logic():
-		s = "mylogic"
-		r = yield s
-		print(r)
-```
-
-但上面并不能看出「非阻塞」和「阻塞」式的区别！
-写出一个看得出区别的例子！
+* Task `yield` 挂起执行，Scheduler `next` 启动
