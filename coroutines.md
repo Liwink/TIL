@@ -1,5 +1,14 @@
 ## Coroutines
 
+##### Three main uses of yield
+
+* Iteration (a producer of data)
+* Receiving messages (a consumer)
+* A trap (cooperative multitasking)
+
+---
+
+
 * Despite some similarities, generators and coroutines are basically two different concepts
 * Generators **produce** values
 * Coroutines tend to **consume** values
