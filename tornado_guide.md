@@ -90,8 +90,19 @@ A simplified version of the coroutine decorator's inner loop:
 			self.next = f.result()
 			self.run()
 		futurn.add_done_callback(callback)
-```
+```	
+
+
 
 > The decorator receives a `Future` from the generator, waits(**without blocking**) for that `Future` to complete, then "unwraps" the `Future` and sends the result back into the generator as the result of the `yield` expression.
 
-** ? Not found how to wait for futurn with blocking in source code. **
+```
+# Runner handle_yield()
+        if not self.future.done() or self.future is moment:
+            self.io_loop.add_future(
+                self.future, lambda f: self.run())
+            return False 
+```
+
+
+
