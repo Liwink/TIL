@@ -1,4 +1,8 @@
-## Nginx
+## nginx
+
+#### Worker Processes
+
+nginx has *one master process* and *several worker processes*. The main purpose of the **master process is to read and evaluate configuration, and maintain worker processes**. **Worker processes do actual processing of requests**. nginx employs event-based model and OS-dependent mechanisms to efficiently distribute requests among worker processes. The worker processes is defined in the configuration file and may be fixed for a given configuration or automatically adjusted to the number of available CPU cores.
 
 #### Configuration File's Structure
 
@@ -24,6 +28,8 @@ server {
 ```
 
 
+
+#### directives
 
 - `include` : includes another file, or files matching the specified mask, into configuration.
 
@@ -60,3 +66,22 @@ server {
 
 - `break`:
   Stops processing the current set of `ngx_http_rewrite_module` directives. If a directive is specified inside the `location`, further processing of the request continues in this location.
+
+  - `upstream`:
+
+    > Syntax: **upstream** name { … }
+    >
+    > Context: http
+
+    Defines **a group of servers**. Servers can listen on *different ports*. In addition, servers *listening on TCP and UNIX-domain sockets* can be mixed.
+
+    ```nginx
+    upstream backend {
+      server backend.example.com weight=5;
+      server 127.0.0.1:8080 max_fails=3 fail_timeout=30s;
+      server unix:/tem/backend;
+      server backup.example.com backup;
+    }
+    ```
+
+    ​
