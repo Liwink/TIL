@@ -1,4 +1,4 @@
-## Python descriptor 
+## Python descriptor
 
 #### python descriptor 的实例：
 
@@ -41,11 +41,9 @@ ValueError("Grade must be between 0 and 100")
 1. [`obj.__getattribute__()`](https://docs.python.org/3/reference/datamodel.html#object.__getattribute__)  唤起  `type(b).__dict__['x'].__get__(b, type(b))`
 2. `b.__dict__['x']`
 3. `type(b).__dict__['x']`
-4. `b.__getattr__('x')`
+4. `b.__getattr__('x')`  (only handles nonexisting attribute name)
 
 所以如果将 `Grade()` 设置为实例变量，调用机制就不会使用 `__get__`  `__set__`方法
-
-
 
 
 
@@ -53,3 +51,31 @@ ValueError("Grade must be between 0 and 100")
 - 访问对象成员时，查找顺序：
   `instance.__dict__` -> `class.__dict__` -> `baseclass.__dict__`
   而非以往 globals、locals。
+
+
+
+---
+
+在 Fluent Python 中看到利用 property 实现复用的方式：
+
+```python
+def quantity(storage_name):
+    def qty_getter(instance):
+        return instance.__dict__[storage_name]
+    def qty_setter(instance, value):
+        if value > 0:
+            instance.__dict__[storage_name] = value
+        else:
+            raise ValueError("value must be > 0")
+    return property(qty_getter, qty_setter)
+
+class LineItem:
+    weight = quantity("weight")
+    price = quantity("price")
+
+    def __init__(self, weight, price):
+        self.weight = weight
+        self.price = price
+```
+
+这里可以实现功能，但确实比 descriptor 复杂。
