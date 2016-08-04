@@ -2,6 +2,8 @@
 
 #### python descriptor 的实例：
 
+> A descriptor is a class that implements a protocol consisting of the `__get__`, `__set__` and `__delete__` methods. The *property* class implements the full descriptor protocol.
+
 ```python
 class Grade():
     def __init__(self):
@@ -56,6 +58,10 @@ ValueError("Grade must be between 0 and 100")
 
 ---
 
+### Fluent Python Way
+
+#### property
+
 在 Fluent Python 中看到利用 property 实现复用的方式：
 
 ```python
@@ -79,3 +85,63 @@ class LineItem:
 ```
 
 这里可以实现功能，但确实比 descriptor 复杂。
+
+
+
+#### descriptor
+
+Fluent Python 给出的 descriptor 实现也比 Effective Python 中要好。原因如下：
+
+> When coding a `__set__`  method, you must keep in mind what the `self` and `instance` arguments mean: `self` is the descriptor instance, and `instance` is the managed instance.
+>
+> Descriptors managing instance attributes should store values in the managed instances. That's why Python provides the instance argument to the descriptor methods.
+
+```python
+class Quantity(self, storage_name):
+    def __init__(self, storage_name):
+	    self.storage_name = storage_name
+    def __set__(self, instance, value):
+        if value > 0:
+            instance.__dict__[self.storage_name] = value
+        else:
+            raise ValueError("value must be > 0")
+    
+class LineItem:
+    weight = Quantity("weight")
+	price = Quantity("price")
+    
+    def __init__(self, weight, price):
+        self.weight = weight
+        self.price = price
+```
+
+为 managed instance 赋值是需要使用 `instance.__dict__`，如果直接使用 dot 或 setattr 会无限递归。
+
+但原文还是觉得 `price = Quantity("price")` 做法 *not-so-elegant*。更好的做法需要 21 章的 class decorator 或者 metaclass。
+
+#### better descriptor
+
+```python
+class Quantity:
+    __counter = 0
+    
+    def __init__(self):
+        cls = self.__class__
+        prefix = cls.__name__
+        index = cls.__counter
+        self.storage_name = "_{}#{}".format(prefix, index)
+        cls.__counter += 1
+    
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self
+      	else:
+            return getattr(instance, self.storage_name)
+        
+    def __set__(self, instance, value):
+        if value > 0:
+            setattr(instance, self.storage_name, value)
+        else:
+            raise ValueError("value must be > 0")
+```
+
